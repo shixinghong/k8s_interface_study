@@ -8,11 +8,11 @@ import (
 
 func main() {
 
-	ref, err := name.ParseReference("hub.fastonetech.com/infra/alpine")
+	ref, err := name.ParseReference("xxxxxx/infra/alpine")
 	if err != nil {
 		panic(err)
 	}
-	
+
 	desc, err := remote.Get(ref)
 	if err != nil {
 		panic(err)
