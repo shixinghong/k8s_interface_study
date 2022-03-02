@@ -8,7 +8,7 @@ import (
 
 func main() {
 
-	ref, err := name.ParseReference("xxxxxx/infra/alpine")
+	ref, err := name.ParseReference("nginx:1.18-alpine")
 	if err != nil {
 		panic(err)
 	}
@@ -18,17 +18,39 @@ func main() {
 		panic(err)
 	}
 
-	if desc.MediaType.IsImage() {
-		fmt.Println("image")
-	}
-	image, err := desc.Image()
-	if err != nil {
-		panic(err)
+	if desc.MediaType.IsIndex() { // 如果是index模式 绝大多是都是index模式
+		idx, err := desc.ImageIndex()
+		if err != nil {
+			panic(err)
+		}
+
+		mf, err := idx.IndexManifest()
+		if err != nil {
+			panic(err)
+		}
+		for _, v := range mf.Manifests {
+			img, err := idx.Image(v.Digest)
+			if err != nil {
+				panic(err)
+			}
+			cf, err := img.ConfigFile()
+			if err != nil {
+				panic(err)
+			}
+			fmt.Println(cf.Config.Entrypoint, cf.Config.Cmd)
+		}
 	}
 
-	cfg, err := image.ConfigFile() // 获取image中的config信息
-	if err != nil {
-		panic(err)
+	if desc.MediaType.IsIndex() {
+		image, err := desc.Image()
+		if err != nil {
+			panic(err)
+		}
+		cf, err := image.ConfigFile()
+		if err != nil {
+			panic(err)
+		}
+		fmt.Println(cf.Config.Entrypoint, cf.Config.Cmd)
 	}
-	fmt.Println(cfg.OS, cfg.Architecture, cfg.Config.Cmd, cfg.Config.Entrypoint)
+
 }
