@@ -8,7 +8,7 @@ import (
 
 func main() {
 
-	ref, err := name.ParseReference("nginx:1.18-alpine")
+	ref, err := name.ParseReference("hub.fastonetech.com/infra/nginx")
 	if err != nil {
 		panic(err)
 	}
@@ -41,7 +41,7 @@ func main() {
 		}
 	}
 
-	if desc.MediaType.IsIndex() {
+	if desc.MediaType.IsImage() {
 		image, err := desc.Image()
 		if err != nil {
 			panic(err)
